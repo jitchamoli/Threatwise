@@ -1,10 +1,12 @@
 # Threatwise
 
-Threatwise teaches cybersecurity awareness through short, interactive browser games. Its first game, **Inbox Investigator**, is a five-minute mission for anyone learning how to handle suspicious or unexpected email.
+Threatwise teaches cybersecurity awareness through short, interactive browser games. Its first game, **Inbox Investigator**, is an untimed mission for anyone learning how to handle suspicious or unexpected email.
 
 ## Play Inbox Investigator
 
-Work through six fictional workplace emails. Inspect sender details and simulated links or attachments, then choose whether to **Proceed**, **Verify separately**, or **Report**. After each decision, the game explains the best response and highlights the clue that mattered.
+Work through fourteen fictional workplace emails. Cases cover unfamiliar senders, legitimate typos, lookalike domains, QR phishing, Apple Gift Card requests, fake renewal callbacks, suspicious app permissions, and payroll changes.
+
+Inspect sender details and simulated links, attachments, QR destinations, or permission prompts, then choose whether to **Proceed**, **Verify separately**, or **Report**. After each decision, the game explains the best response and highlights the clue that mattered.
 
 At the end, review your score and retry any missed cases. Your best score is saved in the browser you played in.
 
