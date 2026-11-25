@@ -14,6 +14,7 @@ const paths = {
   flag: 'M5 22V3m0 1c5-5 9 5 15 0v11c-6 5-10-5-15 0',
   clip: 'm9 15 6-6a2 2 0 0 1 3 3l-8 8a4 4 0 0 1-6-6l9-9a6 6 0 0 1 8 8l-7 7',
   link: 'M10 13a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-2 2 M14 11a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l2-2',
+  qr: 'M3 3h6v6H3z M15 3h6v6h-6z M3 15h6v6H3z M15 15h2v2h-2z M21 15v6h-4',
   chevron: 'm6 9 6 6 6-6',
   clock: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z M12 6v6l4 2',
   info: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z M12 11v5m0-8h.01',
@@ -32,11 +33,23 @@ const actions = {
   report: { label: 'Report', description: 'Escalate to security', icon: 'flag' },
 } as const;
 
-const progressKey = 'threatwise.inbox-investigator.v1';
+const artifactKinds = {
+  attachment: { icon: 'clip', instruction: 'Inspect attachment' },
+  link: { icon: 'link', instruction: 'Inspect link destination' },
+  qr: { icon: 'qr', instruction: 'Inspect QR destination' },
+  permission: { icon: 'lock', instruction: 'Inspect permission prompt' },
+} as const;
 
-function loadBest() {
+// Keep earlier best scores tied to the number of cases players answered.
+const earlierMissions = [
+  { key: 'threatwise.inbox-investigator.v1', total: 6 },
+  { key: 'threatwise.inbox-investigator.v2', total: 11 },
+];
+const progressKey = 'threatwise.inbox-investigator.v3';
+
+function loadBest(key: string, total: number) {
   try {
-    return readProgress(localStorage.getItem(progressKey), scenarios.length);
+    return readProgress(localStorage.getItem(key), total);
   } catch {
     return null;
   }
@@ -53,6 +66,7 @@ function Message({ scenario, answer, replay, onAnswer, onContinue, continueLabel
 }) {
   const feedbackRef = useRef<HTMLHeadingElement>(null);
   const requestedFeedbackFocus = useRef(false);
+  const { artifact } = scenario;
 
   useLayoutEffect(() => {
     if (answer && requestedFeedbackFocus.current) {
@@ -70,7 +84,7 @@ function Message({ scenario, answer, replay, onAnswer, onContinue, continueLabel
         <div className="sender">
           <strong>{scenario.sender}</strong>
           <details className="sender-details">
-            <summary>To you <Icon name="chevron" size={13} /><span className="sr-only">, sender details</span></summary>
+            <summary>Sender details <Icon name="chevron" size={13} /></summary>
             <div className="sender-address">From <span>{scenario.address}</span></div>
           </details>
         </div>
@@ -81,13 +95,13 @@ function Message({ scenario, answer, replay, onAnswer, onContinue, continueLabel
       <div className="context"><Icon name="info" size={17} /><div><strong>What you know</strong><p>{scenario.context}</p></div></div>
       {scenario.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
       <p className="signoff">{scenario.signoff}</p>
-      {scenario.artifact && <details className="artifact">
+      {artifact && <details className="artifact">
         <summary>
-          <span className="artifact-icon"><Icon name={scenario.artifact.kind === 'attachment' ? 'clip' : 'link'} size={18} /></span>
-          <span><strong>{scenario.artifact.label}</strong><small>{scenario.artifact.kind === 'attachment' ? 'Inspect attachment' : 'Inspect link destination'}</small></span>
+          <span className="artifact-icon"><Icon name={artifactKinds[artifact.kind].icon} size={18} /></span>
+          <span><strong>{artifact.label}</strong><small>{artifactKinds[artifact.kind].instruction}</small></span>
           <Icon name="chevron" size={16} />
         </summary>
-        <p>{scenario.artifact.detail}</p>
+        <p>{artifact.detail}</p>
       </details>}
     </div>
     <div className="decision">
@@ -120,7 +134,11 @@ function Message({ scenario, answer, replay, onAnswer, onContinue, continueLabel
 function App() {
   const [active, setActive] = useState(scenarios[0]);
   const [answers, setAnswers] = useState<Answers>({});
-  const [best, setBest] = useState(loadBest);
+  const [best, setBest] = useState(() => loadBest(progressKey, scenarios.length));
+  const [earlierScores] = useState(() => earlierMissions.flatMap(({ key, total }) => {
+    const score = loadBest(key, total);
+    return score === null ? [] : [{ score, total }];
+  }));
   const [view, setView] = useState<'mission' | 'debrief' | 'retry'>(best === null ? 'mission' : 'debrief');
   const [retryAnswer, setRetryAnswer] = useState<Action>();
   const [result, setResult] = useState<ReturnType<typeof gradeMission>>();
@@ -188,7 +206,7 @@ function App() {
           <div className="hero-label"><Icon name="mail" size={16} /> Security awareness</div>
           <h1 id="page-title">Inbox Investigator</h1>
           <p>Read the message, inspect the details, and decide how to respond.</p>
-          <div className="hero-meta"><span><Icon name="clock" size={16} /> About 5 minutes</span><span><Icon name="inbox" size={16} /> 6 messages</span></div>
+          <div className="hero-meta"><span><Icon name="clock" size={16} /> Untimed</span><span><Icon name="inbox" size={16} /> {scenarios.length} messages</span></div>
         </div>
         <div className="hero-art" aria-hidden="true">
           <span className="orbit orbit-one" /><span className="orbit orbit-two" /><span className="orbit orbit-three" />
@@ -204,6 +222,9 @@ function App() {
             <div className="inbox-title"><Icon name="inbox" size={21} /><h2>Inbox</h2><span>{scenarios.length}</span></div>
             <div className="progress-text"><span>Mission progress</span><strong>{completed} of {scenarios.length}</strong></div>
             <progress value={completed} max={scenarios.length} aria-label="Mission progress" />
+            {earlierScores.map(({ score, total }) => (
+              <p key={total} className="progress-note">{total}-case mission best · {score} / {total}</p>
+            ))}
           </div>
           <ol className="case-list">
             {scenarios.map((scenario, index) => {
@@ -211,13 +232,13 @@ function App() {
               const selected = view === 'mission' && active.id === scenario.id;
               return <li key={scenario.id}>
                 <button className={`case-button ${selected ? 'selected' : ''}`} aria-current={selected ? 'true' : undefined}
-                  aria-label={locked ? `${scenario.subject}, unlocks after five cases` : undefined}
+                  aria-label={locked ? `${scenario.subject}, unlocks after ${index} cases` : undefined}
                   disabled={locked || view !== 'mission'}
                   onClick={() => { if (selected) headingRef.current?.focus(); else open(scenario); }}>
                   <span className={`avatar avatar-${scenario.id}`} aria-hidden="true">{scenario.initials}</span>
                   <span className="case-copy"><span className="case-sender">{scenario.sender}</span>
                     <strong>{scenario.subject}</strong>
-                    <small>{locked ? 'Complete the first five cases' : scenario.preview}</small></span>
+                    <small>{locked ? `Complete the first ${index} cases` : scenario.preview}</small></span>
                   <span className="case-state">{answers[scenario.id] ? <><Icon name="check" size={15} /><span className="sr-only">Completed</span></> : locked ? <Icon name="lock" size={14} /> : <span />}</span>
                 </button>
               </li>;
