@@ -50,7 +50,11 @@ function SharingRoundView({ round, roundNumber, replaying, onContinue }: {
             <h3 ref={headingRef} tabIndex={-1}>Choose a detail to hide</h3>
             <p>Select a highlighted detail in the preview.</p>
           </div>
-        ) : <h3>{outcome ? 'What they would see' : 'Your preview'}</h3>}
+        ) : (
+          <h3 ref={outcome ? headingRef : undefined} tabIndex={outcome ? -1 : undefined}>
+            {outcome ? 'What they would see' : 'Your preview'}
+          </h3>
+        )}
         {outcome && !outcome.shared ? (
           <div className="sharing-private"><Icon name="lock" size={30} /><p>Nothing would be shared.</p></div>
         ) : (
@@ -71,7 +75,7 @@ function SharingRoundView({ round, roundNumber, replaying, onContinue }: {
           <button className="sharing-secondary" onClick={() => setStep({ name: 'choose' })}>Cancel</button>
         </div>}
         {outcome && <div className={`feedback sharing-feedback ${outcome.isBest || !outcome.shared ? 'correct' : 'review'}`}>
-          <h3 ref={headingRef} tabIndex={-1}>
+          <h3>
             {outcome.isBest ? 'Good choice' : outcome.shared ? 'A better choice' : 'Keeping it private is okay'}
           </h3>
           <p>{round.lesson}</p>
