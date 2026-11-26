@@ -15,7 +15,7 @@ body { margin: 0; min-width: 300px; }
 button, summary { font: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: default; }
-button:focus-visible, summary:focus-visible, [tabindex="-1"]:focus-visible {
+a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex="-1"]:focus-visible {
   outline: 3px solid #7255bd;
   outline-offset: 3px;
 }
@@ -26,12 +26,30 @@ svg { flex: none; }
 
 .site-header { background: #fff; border-bottom: 1px solid #dfe4ec; }
 .header-inner { min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 750; letter-spacing: -.55px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-size: 19px; font-weight: 750; letter-spacing: -.55px; }
 .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; background: #20283e; color: var(--mint); border-radius: 10px; }
 .header-divider { height: 22px; width: 1px; background: var(--line); margin-inline: 7px; }
-.brand-section, .simulation { color: var(--muted); font-weight: 600; font-size: 13px; letter-spacing: 0; }
-.simulation { display: flex; align-items: center; gap: 8px; }
-.simulation > span { width: 8px; height: 8px; background: #459f7a; border-radius: 50%; }
+.brand-section { color: var(--muted); font-weight: 600; font-size: 13px; letter-spacing: 0; }
+.back-home { padding: 8px 0; color: var(--plum); font-size: 14px; font-weight: 700; text-underline-offset: 3px; }
+
+.game-home { padding-block: clamp(27px, 5vw, 60px); }
+.game-home-intro { margin-bottom: 24px; }
+.game-home-intro h1 { font-size: clamp(38px, 6vw, 65px); line-height: 1.05; letter-spacing: -.055em; }
+.game-home-intro p { margin-top: 10px; color: var(--muted); font-size: 16px; }
+.game-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.game-card { display: flex; flex-direction: column; overflow: hidden; border: 1px solid #dce2eb; border-radius: 16px; background: #fff; color: var(--ink); text-decoration: none; }
+.game-card:hover { border-color: #8e81aa; box-shadow: 0 5px 18px #24203412; }
+.game-card-art { position: relative; overflow: hidden; aspect-ratio: 2.45; background: #e5eee7; }
+.game-card-art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 8%; }
+.inbox-card-art { background: #171c31; color: var(--mint); }
+.inbox-card-art .orbit { left: 50%; }
+.inbox-card-art .envelope { top: 50%; left: 50%; width: 110px; height: 87px; transform: translate(-50%, -50%) rotate(-9deg); }
+.inbox-card-art .art-seal { top: 53%; left: calc(50% + 31px); width: 47px; height: 47px; border-radius: 12px; }
+.game-card-copy { display: flex; flex-direction: column; flex: 1; min-height: 180px; padding: 19px 22px; }
+.game-card-copy h2 { margin-block: 4px; font-size: clamp(23px, 3vw, 31px); letter-spacing: -.035em; }
+.game-card-copy p { color: var(--muted); font-size: 14px; line-height: 1.45; }
+.game-card-copy p:first-child { color: var(--plum); font-size: 12px; font-weight: 750; }
+.game-card-copy > span { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 13px; color: var(--plum); font-size: 14px; font-weight: 750; }
 
 .hero { position: relative; isolation: isolate; overflow: hidden; color: white; background: #171c31; border-radius: 22px; margin-block: 28px 23px; min-height: 231px; }
 .hero-copy { padding: 35px 42px; position: relative; z-index: 1; }
@@ -160,7 +178,8 @@ footer { display: flex; align-items: center; justify-content: center; gap: 6px; 
   .shell { width: calc(100% - 24px); }
   .header-inner { min-height: 57px; }
   .brand-section, .header-divider { display: none; }
-  .simulation { font-size: 11px; }
+  .game-grid { grid-template-columns: 1fr; gap: 12px; }
+  .game-card-copy { min-height: 0; padding: 15px; }
   .hero { margin-block: 13px; min-height: auto; border-radius: 15px; }
   .hero-copy { padding: 23px 17px; }
   .hero h1 { font-size: clamp(31px, 8vw, 43px); }

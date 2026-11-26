@@ -1,6 +1,6 @@
 # Threatwise
 
-Threatwise teaches cybersecurity awareness through short, interactive browser games. Its first game, **Inbox Investigator**, is an untimed mission for anyone learning how to handle suspicious or unexpected email.
+Threatwise teaches everyday cybersecurity and privacy through short, untimed browser games. Choose a game from the home screen.
 
 ## Play Inbox Investigator
 
@@ -9,6 +9,12 @@ Work through fourteen fictional workplace emails. Cases cover unfamiliar senders
 Inspect sender details and simulated links, attachments, QR destinations, or permission prompts, then choose whether to **Proceed**, **Verify separately**, or **Report**. After each decision, the game explains the best response and highlights the clue that mattered.
 
 At the end, review your score and retry any missed cases. Your best score is saved in the browser you played in.
+
+## Play Safe to Share?
+
+Work through five everyday situations involving a puppy photo, a boarding pass, a group chat screenshot, live location, and a park photo. Check who will see the post, then choose **Share as is**, **Hide a detail**, or **Keep private**.
+
+Tap a highlighted detail to conceal it. After deciding, see what your audience would have received and why another choice might work better. Retry any round as you play or from the results screen.
 
 ## Run locally
 
@@ -25,9 +31,9 @@ Open the local URL printed by Vite. The app is built with React, TypeScript, and
 
 ## Build and test
 
-Run `npm test` to check the scenario data, scoring, and saved progress. Run `npm run build` to generate the production site in `dist/`.
+Run `npm test` to check the scenario data, inbox scores, saved progress, and sharing outcomes. Run `npm run build` to generate the production site in `dist/`.
 
-The mission content lives in [`src/scenarios.ts`](src/scenarios.ts).
+The game content lives in [`src/scenarios.ts`](src/scenarios.ts) and [`src/sharing/rounds.ts`](src/sharing/rounds.ts).
 
 ## License
 
